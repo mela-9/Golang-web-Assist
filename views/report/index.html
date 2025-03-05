@@ -19,7 +19,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="/">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="/add-transaction">Tambah Transaksi</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/report">Laporan Keuangan</a></li>
+
                 </ul>
             </div>
         </div>
@@ -29,42 +29,7 @@
         <h2 class="text-center mb-4">💰 Selamat Datang di Aplikasi Pencatatan Keuangan</h2>
         <p class="text-center">Catat pemasukan dan pengeluaran Anda dengan mudah.</p>
 
-        <!-- Form Tambah Transaksi -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h4 class="card-title">📝 Tambah Transaksi</h4>
-                <form action="/add-transaction" method="POST">
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Jumlah (Rp)</label>
-                        <input type="number" class="form-control" id="amount" name="amount" placeholder="Masukkan jumlah" required>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Kategori</label>
-                        <select class="form-select" id="category" name="category" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="Makanan">Makanan</option>
-                            <option value="Transportasi">Transportasi</option>
-                            <option value="Hiburan">Hiburan</option>
-                            <option value="Tabungan">Tabungan</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Tanggal</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Tambahkan deskripsi transaksi..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">💾 Simpan Transaksi</button>
-                </form>
-            </div>
-        </div>
 
         <!-- Daftar Transaksi -->
         <div class="card shadow-sm">
@@ -109,7 +74,7 @@
                         {{ end }}
                     </tbody>
                 </table>
-                <a href="/report" class="btn btn-success w-100 mt-2">📊 Lihat Laporan Keuangan</a>
+                <a href="/laporan" class="btn btn-success w-100 mt-2">📊 Lihat Laporan Keuangan</a>
             </div>
         </div>
 

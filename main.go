@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"Golang-web-Assist/config"
+	"Golang-web-Assist/controllers"
 	"Golang-web-Assist/controllers/homecontroller"
-	"Golang-web-Assist/controllers/reportcontroller"
 	"Golang-web-Assist/controllers/transactioncontroller"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	mux.HandleFunc("/add-transaction", transactioncontroller.TambahTransaksi)
 
 	// Routing halaman laporan keuangan & tabungan
-	mux.HandleFunc("/report", reportcontroller.ShowReport)
+	mux.HandleFunc("/laporan", controllers.ShowReport)
 
 	// Jalankan server
 	fmt.Println("Server berjalan di port 8080...")
