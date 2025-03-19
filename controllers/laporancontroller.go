@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,11 +18,28 @@ type Transaction struct {
 	Description string
 }
 
+// Struct untuk menyimpan data laporan keuangan
+type ReportData struct {
+	Transactions  []Transaction
+	TotalIncome   float64
+	TotalExpense  float64
+	Balance       float64
+	TargetSavings float64
+}
+
 // Handler untuk halaman laporan
 func ShowReport(w http.ResponseWriter, r *http.Request) {
 	// Koneksi ke database
 	db := config.ConnectDB()
 	defer db.Close()
+
+	// Ambil saldo awal dari tabel initial_balance
+	var initialBalance float64
+	err := db.QueryRow("SELECT amount FROM initial_balance ORDER BY id DESC LIMIT 1").Scan(&initialBalance)
+	if err != nil {
+		log.Println("⚠️ Tidak ada saldo awal yang tersimpan, default ke 0")
+		initialBalance = 0 // Default jika belum ada saldo awal
+	}
 
 	// Query ambil semua transaksi
 	rows, err := db.Query("SELECT id, amount, category, date, description FROM transactions ORDER BY date DESC")
@@ -35,28 +51,58 @@ func ShowReport(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	var transactions []Transaction
+	var totalIncome, totalExpense float64
 
 	// Looping ambil data
 	for rows.Next() {
 		var trx Transaction
-		var date sql.NullTime
+		var date string
 
 		if err := rows.Scan(&trx.ID, &trx.Amount, &trx.Category, &date, &trx.Description); err != nil {
 			log.Println("❌ Gagal membaca data transaksi:", err)
 			continue
 		}
 
-		// Konversi tanggal dari `time.Time` ke `string`
-		if date.Valid {
-			trx.Date = date.Time.Format("02-01-2006")
+		trx.Date = date // Simpan langsung sebagai string
+		// Hitung total pemasukan dan pengeluaran berdasarkan kategori
+		if trx.Amount > 0 {
+			totalIncome += trx.Amount
 		} else {
-			trx.Date = "Tidak diketahui"
+			totalExpense += -trx.Amount
 		}
 
 		transactions = append(transactions, trx)
 	}
 
-	// Cek apakah transaksi berhasil diambil
+	for i := range transactions {
+		transactions[i].ID = i + 1 // Nomor ulang ID berdasarkan indeks array
+	}
+
+	// Hitung saldo akhir
+	balance := initialBalance + totalIncome - totalExpense
+
+	// Query untuk mengambil target tabungan terbaru
+	var targetSavings float64
+	err = db.QueryRow("SELECT target_amount FROM savings ORDER BY id DESC LIMIT 1").Scan(&targetSavings)
+	if err != nil {
+		log.Println("⚠️ Tidak ada target tabungan yang tersimpan, default 0")
+		targetSavings = 0 // Set default jika tidak ada data
+	}
+
+	// Buat struct yang menggabungkan transaksi dan target tabungan
+	reportData := ReportData{
+		Transactions:  transactions,
+		TotalIncome:   totalIncome,
+		TotalExpense:  totalExpense,
+		Balance:       balance,
+		TargetSavings: targetSavings,
+	}
+
+	// Debugging output
+	fmt.Println("✅ Saldo Awal:", initialBalance)
+	fmt.Println("✅ Total Pemasukan:", totalIncome)
+	fmt.Println("✅ Total Pengeluaran:", totalExpense)
+	fmt.Println("✅ Saldo Akhir:", balance)
 	fmt.Println("✅ Data transaksi:", transactions)
 
 	// Load template
@@ -66,6 +112,6 @@ func ShowReport(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Gagal memuat halaman", http.StatusInternalServerError)
 		return
 	}
-
-	tmpl.Execute(w, transactions)
+	fmt.Println("✅ Data untuk laporan:", reportData)
+	tmpl.Execute(w, reportData)
 }

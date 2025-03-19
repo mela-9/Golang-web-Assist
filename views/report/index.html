@@ -50,31 +50,10 @@
                             <td>{{ .Category }}</td>
                             <td>Rp {{ .Amount }}</td>
                         </tr>
-                         <!-- Form Edit Transaksi -->
-                <form action="/edit-transaction" method="POST">
-                    <input type="hidden" name="id" value="{{ .ID }}">
-                    <input type="text" name="deskripsi" value="{{ .Deskripsi }}" required>
-                    <input type="number" name="jumlah" value="{{ .Jumlah }}" required>
-                    <select name="kategori">
-                        <option value="Makan" {{if eq .Kategori "Makan"}}selected{{end}}>Makan</option>
-                        <option value="Transportasi" {{if eq .Kategori "Transportasi"}}selected{{end}}>Transportasi</option>
-                        <option value="Belanja" {{if eq .Kategori "Belanja"}}selected{{end}}>Belanja</option>
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-
-                <!-- Form Hapus Transaksi -->
-                <form action="/delete-transaction" method="POST">
-                    <input type="hidden" name="id" value="{{ .ID }}">
-                    <button type="submit" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</button>
-                </form>
-            </td>
-        </tr>
-                        
-                        {{ end }}
+                          {{ end }}
                     </tbody>
                 </table>
-                <a href="/laporan" class="btn btn-success w-100 mt-2">📊 Lihat Laporan Keuangan</a>
+                <
             </div>
         </div>
 
